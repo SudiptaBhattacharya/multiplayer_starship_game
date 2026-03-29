@@ -3,6 +3,16 @@ Project for Object Oriented Programming
 
 # 🚀 Multiplayer Starship Game
 
+## 👥 Contributors
+This project was originally developed as a group project at the University of Adelaide.
+
+Team members:
+- Sudipta(ME)
+- Martin
+- Nesh
+
+This repository represents my personal version for portfolio purposes.
+
 ## 📌 Overview
 A real-time multiplayer starship game built using C++ and SFML, featuring client-server networking and interactive gameplay mechanics.
 
