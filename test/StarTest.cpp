@@ -1,0 +1,1 @@
+#include"../test/StarTest.h"

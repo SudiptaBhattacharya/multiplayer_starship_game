@@ -1,0 +1,210 @@
+Change Log
+
+
+They were some minor deviations in the final project code compared to our
+Project plan since we decided to include and remove some qualities and logistics from our 
+"Stellar orbit" multiplayer Game.
+
+All the named files through Makefile "Game.o" are in the #build subfolder.
+All header files including class data attributes and function members are in the #include directory
+
+All implementations of the classes(Source files) are in #src directory. 
+
+Unit Tests for all the individual files are in #test directory. 
+Since every file could not have been tested on its own(espcially abstract class Starship as we can not instantiate an object from 
+that class), we printed text messages in some function calls and error messages to demonstrate the 
+functions work as expected. 
+
+Starting with Game class:
+. Game:
+- Starship* player1 
+- Starship* player2
+: This is because we took 2 starships as players, Starship inherited from Player attributes like playerName and survivalTime
+which are later the winning factors for this game. 
+
+- EndMenu* endMenu: Creates an end screen when One of the players reach 0 healthPoints, also displaying the player with
+the longest Survival time as the winner.
+
+- time_t p1EndTime, p2EndTime, startTime,  float secondPassed : Calculates the survival time and increments it.
+
+- Clock clock: Restart the time and get the elapsed time 
+
+- float windowWidth, windowHeight: Required for Boundary Checking, collision detection with the boundary of the window,
+so that players do not move outside of the window. 
+
+- Text player1Text, player2Text, Font font, void updateText() : Display the player data as text in the top left corner
+of the window.
+
+- handleKeyPress(Event& event) : function which will be further called in handleEvents() , described as the ability
+feature activated when either player choose to press "Space" key(only once possible and during the time when the player
+activating the ability has HP greater than 0).
+
+. Player, Network , Map:
+- No Change
+
+. Menu: 
+- No Change
+
+. Starship:
+-   Color color; : Takes the colour of the ship for both players
+    float radius : Takes the radius (size) of ship
+    string name; : Clarifies Starship type, either WarpShip or SpyShip
+    bool specialAbilityUsed; : set to False 
+
+    
+
+    All the move() functions are changed to have return type boolean for better error messages.(instead of void)
+
+    void inputHandle(float speed, float deltaTime, bool isWindowFocused, float windowHeight, float windowWidth) : takes additional parameters like windowWidth and windowHeight,
+    which are needed for boundary checking.
+
+    virtual void useSpecialAbility(Starship* otherShip) = 0, pure virtual function for abstract class Starship , with updated parameters, taking pointer to 
+    other Ship, because we might have one or more WarpShips or SpyShips instead of 1 WarpShip and 1 SpyShip. 
+
+    // no ability is used 
+
+    FloatRect getBoundingBox() : Gets the bounding box of the ships
+
+    
+
+ . WarpShip:
+ - Commented instead of an ability function 
+
+ . SpyShip:
+ - Commented, instead of an ability function
+
+
+. Star : 
+  Attributes:
+    + Radiation** radiation: to keep track of spawned radiation.
+    + int radiation_counter: to keep track of number of spawned radiation.
+    + float time_passed_radiation: to keep track of time passed in seconds between radiation spawning.
+    + float time_passed_phase: to keep track of total game time to change Star phase.
+    - float damage: damage attribute moved to radiation class.
+  Functions:
+    M verticalAttack() -> wallRadiation(): pattern change for more interesting gameplay.
+    + radiate(): calls the various forms of radiation and contains phase settings.
+    + checkCollisions(): checks collisions of Players with the Star and radiation.
+
+. Radiation:
+  Attributes:
+    + float angle: set the angle of the movement path of the radiation.
+    - float speed: speed is now passed into move function.
+  Functions:
+    M move(float angle) -> move(float speed): angle is now an attribute, and speed is passed in.
+    + draw(): renders the radiation in the game window.
+
+
+
+. Button: (New class)
+- Button();
+        Button(std::string text, sf::Vector2f size, int charSize, sf::Color backgroundColor, sf::Color textColor); // parameterized constructor
+        ~Button();  : destructor 
+        void setFont(sf::Font &font);
+        void setBackgroundColor(sf::Color color);
+        void setTextColor(sf::Color color);
+        void setPosition(sf::Vector2f position);
+        void draw(sf::RenderWindow &window);
+        bool isMouseOver(sf::RenderWindow &window) :
+
+.EndMenu(New Class) :
+-       int selectItemIndex;
+        float width;
+        float height;
+        sf::RenderWindow* endMenuWindow;
+        float score;
+        sf::Font font;
+        sf::Text endMenu[2];
+        sf::Text displayText[2];
+        Player *player1;
+        Player *player2;
+        float time1;
+        float time2;
+        Menu *menu;          
+
+        EndMenu(float width, float height, Player &player1, Player &player2);
+        ~EndMenu();
+        void createWindow();
+        void moveUp();
+        void moveDown();
+        void renderMenu();
+
+. Textbox(New Class) :
+-      sf::Text textbox;
+        std::ostringstream text;
+        bool isSelected = false;
+        bool hasLimit = false;
+        int limit;
+        void inputLogic(int charTyped);
+        void deleteLastChar();
+
+        Textbox();
+        Textbox(int size, sf::Color color, bool isSelected);
+        ~Textbox();
+        void setFont(sf::Font &font);
+        void setPosition(sf::Vector2f position);
+        void setLimit(bool hasLimit);
+        void setLimit(bool hasLimit, int limit);
+        void setSelected(bool isSelected);
+        void draw(sf::RenderWindow &window);
+        std::string getText();
+        void typeOn(sf::Event input);    
+
+* Relationship between all the classes written in the Project plan Document still remain the same here in the final Project code, But
+since there are a few additional classes, new relationships include: 
+
+-  Game is related to Endmenu, Button, Textbox by Aggregation, since these class implementations form part of the user interface 
+managed by Game. 
+
+
+*User Interaction Description(Updated):
+
+Compared to the Plan Document where it was stated the first screen will have "Start server", "Connect to a Server" and
+"Exit" Buttons. Players can enter their names, however, only player1 is assigned to server and player2 to client. Both can enter their names, but player2, client will be
+initialized to Enemy on window screen. The Start menu will also have a leaderboard showing the top 5 high scores, where scores are the number of wins recorded. 
+
+The other connection type rules(like entering the ip address and port) on the terminal 
+to connect to the server: Only Ip Address is taken as input now.
+
+Game will start if both players are displayed on the screen. 
+In addition to health points , Player Name,
+we will display the starship type, healthPoints.
+
+The end screen will display a text saying which player won,"Player _ wins!!", and will be displayed in both Server and client screens.
+Whoever dies first will lose the game, so compared to Project Plan , There is no survival time mentioned now. 
+
+
+*Unit Testing and Debugging:
+
+Almost similar to the Plan Document. Since all the source files cannot be tested independently, like abstract class 
+Starship , or endMenu or radiation etc, we have printed text messages and called certain functions and constructors of the classes to indicate that since
+the test message is displayed, we can deduce that the function works as expected and so does the test files. For Starship, since Warpship and SpyShip inherit from it, we 
+added test for them to conclude Starship class works as expected. 
+
+Input validation like checking negative numbers for ip address, decremented Hp below 0 is set to 0 , and when that happens,
+end screen is displayed with the options of "quit", or "exit", which basically has the same functionality. 
+
+
+*Test Files(.h and .cpp) created in #test directory and compiled in MakeFile and also using g++ command.
+- MapTest.h : contains class "Maptest" 
+
+-MapTest.cpp - MapTest.h is included and Tests are compiled using the .cpp files.
+
+-PlayerTest
+
+-RadiationTest.cpp
+
+-ShipTest.cpp(Test for Both WarpShip and SpyShip)
+
+-StarTest.cpp
+
+All test files follow same format, class in .h and that is included in .cpp for compilation.
+
+Compilation using Makefile:
+All the test files will be compiled using g++ command.
+make test 
+
+The main game (Game.cpp) is compiled in the terminal using ./build/game 
+
+Instructions for User Input, Interaction and Feednack and basically How to Play This Game:
+# Follow The README.md file for those specific instructions. 
